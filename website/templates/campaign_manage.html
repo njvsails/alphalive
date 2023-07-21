@@ -1,0 +1,135 @@
+{% extends 'base_dashboard.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-6">
+            <h4 class="mb-3">Documents</h4>
+            <div class="card mb-3">
+                <div class="table-responsive" style="height:70vh; overflow-y:auto;">
+                    <table class="table table-hover table-centered mb-0" id="documentTable">
+                        <thead>
+                            <tr>
+                                <th>Document Name</th>
+                                <th>Document Type</th>
+                                <th>Date Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for document in documents %}
+                            <tr id="{{ document.id }}">
+                                <td>{{ document.document_name }}</td>
+                                <td>{{ document.document_type }}</td>
+                                <td>{{ document.date_created.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+                <button class="btn btn-primary" id="view-document-btn" onclick="viewDocument()" disabled>View Document</button>
+                <button class="btn btn-danger" id="delete-document-btn" onclick="deleteDocument()" disabled>Delete Document</button>
+                <a href="{{ url_for('views.rental_select', campaign_id=campaign.id) }}" class="btn btn-success">Add New Document</a>
+            </div>
+            
+        </div>
+        <div class="col-lg-6">
+            <h4 class="mb-3">Campaign Details</h4>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p><strong>Property Address:</strong> {{ campaign.property_address }}</p>
+                    <p><strong>Property Type:</strong> {{ campaign.property_type }}</p>
+                    <p><strong>Rental Amount:</strong> {{ campaign.rental_amount }}</p> 
+                    <p><strong>Date Available:</strong> {{ campaign.market_date }}</p>                                 
+                    <p><strong>Number of Bedrooms:</strong> {{ campaign.bedrooms }}</p>
+                    <p><strong>Number of Bathrooms:</strong> {{ campaign.bathrooms }}</p>
+                    <p><strong>Number of Parking Spaces:</strong> {{ campaign.car_spaces }}</p>
+                    <p><strong>Furnished:</strong> {{ "Yes" if campaign.furnishing else "No" }}</p>
+                    <p><strong>Air Conditioned:</strong> {{ "Yes" if campaign.airconditioning else "No" }}</p>
+                    <p><strong>Pet Friendly:</strong> {{ "Yes" if campaign.pet_friendly else "No" }}</p>
+                    <a href="{{ url_for('views.campaign_manage', campaign_id=campaign.id) }}" class="btn btn-primary">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variable to hold the selected document's ID
+    let selectedDocumentId = null;
+
+    document.querySelectorAll('#documentTable tr').forEach(row => {
+        row.addEventListener('click', function() {
+            // Remove .table-active class from previously selected row, if any
+            const selectedRow = document.querySelector('.table-active');
+            if (selectedRow) selectedRow.classList.remove('table-active');
+
+            // Add .table-active class to the clicked row
+            this.classList.add('table-active');
+            selectedDocumentId = this.id;  // Update selected document's ID
+
+            // Enable buttons
+            document.getElementById('delete-document-btn').disabled = false;
+            document.getElementById('view-document-btn').disabled = false;
+        });
+    });
+
+    document.getElementById('delete-document-btn').addEventListener('click', function() {
+        const confirmed = confirm('Are you sure you want to delete the selected document?');
+        if (confirmed && selectedDocumentId) {
+            // Send the delete request for the selected document
+            fetch(`/document/delete/${selectedDocumentId}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();  // Refresh page if deletion was successful
+                    } else {
+                        console.error('Failed to delete document');
+                    }
+                })
+                .catch(console.error);
+        }
+    });
+
+    document.getElementById('view-document-btn').addEventListener('click', function() {
+        if (selectedDocumentId) {
+            window.location.href = '/document/' + selectedDocumentId;
+        }
+    });
+
+    $.ajax({
+    url: '/campaign/delete/' + campaignId,
+    type: 'DELETE',
+    success: function(result) {
+        // Do something with the result
+    }
+});
+</script>
+
+
+
+    <script>
+        // Get a reference to the table
+        var table = document.getElementById('documentTable');
+    
+        // Listen for a click event on the table
+        table.addEventListener('click', function(e) {
+            // Get a reference to the currently active row
+            var activeRow = table.querySelector('.table-active');
+            
+            // If there was an active row, remove the active class
+            if (activeRow) {
+                activeRow.classList.remove('table-active');
+            }
+            
+            // If the clicked element was a table row, add the active class
+            if (e.target.closest('tr')) {
+                e.target.closest('tr').classList.add('table-active');
+            }
+        });
+    </script>
+    
+
+        
+
+{% endblock %}

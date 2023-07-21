@@ -1,0 +1,57 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Campaigns{% endblock %}
+
+{% block content %} 
+<div class="row mt-3">
+    <div class="col-12 col-md-4">
+        <div class="card widget-flat d-flex flex-column">
+            <div class="card border-primary border">
+                <div class="card-body d-flex flex-column justify-content-between" style="height:80vh">
+                    <h4 class="card-title text-center mb-4">Create a New Rental Campaign</h4>
+                    <!-- Card content goes here -->
+                    <div>
+                    <!-- Content -->
+                    </div>
+                    <div class="mt-auto text-center">
+                    <a href="/campaign/rental" class="btn btn-primary" style="width:80%">Create Rental Campaign ></a>
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card widget-flat d-flex flex-column">
+            <div class="card border-info border">    
+                <div class="card-body d-flex flex-column justify-content-between" style="height:80vh">
+                    <h4 class="card-title text-center mb-4">Create a New Sales Campaign</h4>
+                    <!-- Card content goes here -->
+                    <div>
+                    <!-- Content -->
+                    </div>
+                    <div class="mt-auto text-center">
+                    <a href="/campaign/sale" class="btn btn-info" style="width:80%">Create Sales Campaigns ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card widget-flat d-flex flex-column">
+            <div class="card border-secondary border">
+                <div class="card-body d-flex flex-column justify-content-between" style="height:80vh">
+                    <h4 class="card-title text-center mb-4">Manage Previous Campaigns</h4>
+                    <!-- Card content goes here -->
+                    <div>
+                    <!-- Content -->
+                    </div>
+                    <div class="mt-auto text-center">
+                    <a href="/campaign/all" class="btn btn-secondary" style="width:80%">Manage Previous Campaigns ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+{% endblock %}

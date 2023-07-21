@@ -1,0 +1,112 @@
+{% extends "base_dashboard.html" %}
+
+{% block header %} 
+<style>
+    /* style the chat input area */
+
+    /* style the chat messages */
+    .message {
+        font-size: 16px; /* larger font size */
+        display: flex;
+        flex-direction: column;
+        width: fit-content; /* make the bubble only as wide as the text */
+        max-width: 70%;
+    }
+    .message strong {
+        margin-right: 5px; /* spacing between the name and the text */
+        text-align: left;
+    }
+    
+    .message.user {
+        margin-left: auto; /* align the user's messages to the right */
+    }
+    .message.chatbot {
+        margin-right: auto; /* align the chatbot's messages to the left */
+    }
+
+</style>
+{% endblock %}
+{% block title %} AI Assistant {% endblock %}
+
+{% block content %} 
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mt-4">
+            <div class="card-body" >
+                <div class="conversation-list" >
+                    <div id="chatbox" style="height:80vh; overflow-y: scroll;" >
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control chat-input" placeholder="Enter your text" required="" id="chat-input"> <!-- Added id here -->
+                            <div class="invalid-feedback">
+                                Please enter your message
+                            </div>
+                        </div>
+                        <div class="col-auto d-grid">
+                            <button type="submit" id="chat-send" class="btn btn-primary">Send</button> <!-- Changed button type to 'submit' -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $("#chat-send").on("click", function() {
+            // get the user's message from the input field
+            var userMessage = $("#chat-input").val();
+
+            // clear the input field
+            $("#chat-input").val("");
+
+            // add the user's message to the chat box
+            $('#chatbox').append(`
+                <div class="message user">
+                    <strong>You</strong>
+                    <div class="ctext-wrap">${userMessage}</div>
+                </div>
+            `);
+
+            // send the user's message to the server
+            $.ajax({
+                url: '/api/chatbot',  // your backend endpoint
+                method: 'POST',
+                data: { text: userMessage },
+                success: function(data) {
+                    // get the AI's response from the server's response
+                    var aiMessage = data.text;
+
+                    // add the AI's response to the chat box
+                    $('#chatbox').append(`
+                        <div class="message chatbot">
+                            <strong>REAI Assistant</strong>
+                            <div class="ctext-wrap">${aiMessage}</div>
+                        </div>
+                    `);
+
+                    // scroll to the bottom of the chat box
+                    $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+                },
+                error: function() {
+                    alert("Error communicating with the server. Please try again.");
+                }
+            });
+        });
+
+        // trigger chat-send button click event on 'Enter' key press, but not when 'Shift' is held down
+        $("#chat-input").on("keydown", function(event) {
+            if(event.which == 13 && !event.shiftKey) {
+                event.preventDefault();
+                $("#chat-send").click();
+            }
+        });
+    });
+</script>
+    
+{% endblock %}

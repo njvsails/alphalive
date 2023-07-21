@@ -1,0 +1,81 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %} Sales Postcode Tool {% endblock %}
+
+{% block content %} 
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <!-- ... (same as before) ... -->
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </nav>
+            <!-- End of Topbar -->
+
+            <div class="container-fluid">
+                <!-- Input and Output Section -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">ChatGPT Service</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="gpt_form" method="POST">
+                                    <div class="form-group">
+                                        <label for="inputNumber">Enter a 4-digit number:</label>
+                                        <input type="number" class="form-control" id="inputNumber" name="inputNumber" min="1000" max="9999" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                                <div id="outputBox" class="mt-4">
+                                    <label for="outputText">Output:</label>
+                                    <textarea class="form-control" id="outputText" rows="10" readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Input and Output Section -->
+            </div>
+        </div>
+        <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <!-- JavaScript code for form submission and AJAX request -->
+    <!-- ... (same as before) ... -->
+    <script>
+        $(document).ready(function() {
+            $('#gpt_form').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/api/chat_gpt',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        $('#outputText').val(response.outputText);
+                    },
+                    error: function() {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock %}
